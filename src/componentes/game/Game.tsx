@@ -11,7 +11,12 @@ import { useDamageCaused } from "../../data/pokemon/hooks";
 const Game = () => {
   const navigate = useNavigate();
   const pokemonsData = useSelector((state: State) => state.pokemon);
-  const [player1isAttacker, setPlayer1isAttacker] = useState<boolean>(true);
+  const player1isAttackerStorage: string | null =
+    localStorage.getItem("player1isAttacker");
+
+  const [player1isAttacker, setPlayer1isAttacker] = useState<boolean>(
+    player1isAttackerStorage ? player1isAttackerStorage === "true" : true
+  );
   const [moveOne, setMoveOne] = useState<string>(
     pokemonsData.player1.moves[0].name
   );
@@ -44,8 +49,22 @@ const Game = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pokemonsData]);
 
+  const onSaveGame = () => {
+    localStorage.setItem("player1", JSON.stringify(pokemonsData.player1));
+    localStorage.setItem("player2", JSON.stringify(pokemonsData.player2));
+    localStorage.setItem("player1isAttacker", player1isAttacker.toString());
+  };
+
   return (
     <Layout>
+      <Button
+        variant="text"
+        color="error"
+        sx={{ position: "absolute", top: 16, right: 16 }}
+        onClick={onSaveGame}
+      >
+        Guardar partida
+      </Button>
       <Stack height="100%" width="100%" gap={2} alignItems="center">
         <Stack direction="row" justifyContent={"space-around"} width="80%">
           <Paper sx={{ background: "transparent", mb: 2 }} elevation={0} square>
